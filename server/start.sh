@@ -1,6 +1,6 @@
 #!/bin/sh
 
-IP=`/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
+IP=`/sbin/ifconfig tun0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
 HOSTNAME=`cat /etc/hostname`
 MSG=\{\"short_message\":\"startup\",\"host\":\"$HOSTNAME\",\"address\":\"$IP\"\}
 echo $MSG
