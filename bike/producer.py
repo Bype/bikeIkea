@@ -34,7 +34,7 @@ class UIBike:
 		size = width, height = 480,272
 		self.screen = pygame.display.set_mode(size)
 		pygame.mouse.set_visible(False)
-		self.bg = pygame.image.load("img/bg.png").convert()
+		self.bg = pygame.image.load("img/bg.jpg").convert()
 		self.bgrect = self.bg.get_rect()
 		self.scale = pygame.image.load("img/scale.png").convert_alpha()
 		self.scalerect = self.scale.get_rect()
@@ -61,7 +61,7 @@ class UIBike:
 		if self.targety < self.cropy:
 			self.cropy -= (self.cropy-self.targety)/10
 		self.screen.blit(self.scale,(64,0),(0,self.cropy,self.scalerect.w,self.cropy+272))
-		pygame.display.update((64,0,147,272))
+		pygame.display.update((64,0,self.scalerect.w,272))
 		if self.currentIcon != self.nextIcon:
 			if(self.iconx<480):
 				self.screen.blit(self.icon[self.currentIcon],(self.iconx,36),self.icon[self.currentIcon].get_rect())
