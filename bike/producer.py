@@ -1,25 +1,27 @@
 import time
-import zmq
 import random
 import sys
 import pygame
 from gelfclient import UdpClient
 import socket
-
+import liblo
 
 class Publisher:
 	def __init__(self):
+		self.bike = random.randrange(0,8)
 		self.gelf = UdpClient('log.bype.org', port=12201, mtu=8000, source=socket.gethostname())
-		context = zmq.Context()
-		self.zmq = context.socket(zmq.PUSH)
-		self.zmq.connect("tcp://127.0.0.1:5557")
+		try:	
+			self.target = liblo.Address("localhost",1234)
+		except liblo.AddressError as err:
+		    print(err)
+		    sys.exit()
+
 
 	def logPower(self,aPower):
 		self.gelf.log("bike",power=aPower)
 
 	def pushPower(self,aPower):
-		self.zmq.send_json({ 'bike':1,'power' :  aPower})
-
+		liblo.send(self.target, "/power",self.bike ,aPower)
 
 class UIBike:
 	def __init__(self):
@@ -28,7 +30,9 @@ class UIBike:
 		self.icon = []
 		self.currentIcon = 0
 		self.nextIcon = 0
-		self.iconx = 240
+		self.iconx = 480
+		self.powerRanger =[10,20,40,80,120,180]
+		self.lastIcon = time.time()
 
 	def setupScreen(self):
 		size = width, height = 480,272
@@ -49,9 +53,17 @@ class UIBike:
 	def setPower(self,p):
 		self.power = p
 		self.targety = int((self.scalerect.h-272)-(self.power*self.ratio))
+		for ipr in range(0,6):	
+			if p < self.powerRanger[ipr]:
+				self.setIcon(ipr)
+				break
+
 
 	def setIcon(self,i):
-		self.nextIcon = i
+		if (i != self.nextIcon ) and (i != self.currentIcon) and ( 2 < time.time() - self.lastIcon ) :
+			self.nextIcon = i
+			self.lastIcon = time.time() 
+
 
 
 	def update(self):
@@ -78,12 +90,13 @@ class UIBike:
 myBike = UIBike()
 myLog = Publisher()
 
-pygame.time.set_timer(pygame.USEREVENT+1, 20000)
+pygame.time.set_timer(pygame.USEREVENT+1, 60000)
 pygame.time.set_timer(pygame.USEREVENT+2, 1000)
-pygame.time.set_timer(pygame.USEREVENT+3, 10000)
+pygame.time.set_timer(pygame.USEREVENT+3, 100)
 myBike.setupScreen()
 
 clock = pygame.time.Clock()
+power = 3
 
 while True:
 	for event in pygame.event.get():
@@ -92,8 +105,13 @@ while True:
 		if event.type == pygame.USEREVENT+2:
 			myLog.pushPower(myBike.power)			            
 		if event.type == pygame.USEREVENT+3:
-			myBike.setPower(random.randrange(0,200))
-			myBike.setIcon(random.randrange(1,5))
+			if(power < 199) and (3<=power):
+				power += random.randrange(-1,3)
+			else:
+				power = 3
+			myBike.setPower(power)
+			if (random.randrange(0,100)<5):
+				power = 3
 		if event.type == pygame.QUIT:
 			break
 	myBike.update()
