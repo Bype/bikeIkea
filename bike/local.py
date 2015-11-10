@@ -1,6 +1,6 @@
 import wiringpi2 as wiringpi
 import simplejson
-
+from subprocess import call
 
 pin_base = 65      # lowest available starting number is 65  
 i2c_addr = 0x21
@@ -34,6 +34,9 @@ changed=data.replace('zone#ikcop','zone'+str(zone)+'ikcop')
 target.write(changed)
 source.close()
 target.close()
+
+call(["ifdown", "wlan0"])
+call(["ifup", "wlan0"])
 
 print "zone%dbike%d" % (zone,bike)
 
