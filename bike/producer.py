@@ -9,7 +9,7 @@ import liblo
 class Publisher:
 	def __init__(self):
 		self.bike = random.randrange(0,8)
-		self.gelf = UdpClient('log.bype.org', port=12201, mtu=8000, source=socket.gethostname())
+		self.gelf = UdpClient('162.219.4.234', port=12201, mtu=8000, source=socket.gethostname())
 		try:	
 			self.target = liblo.Address("localhost",1234)
 		except liblo.AddressError as err:

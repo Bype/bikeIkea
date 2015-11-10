@@ -7,7 +7,7 @@ from liblo import *
 
 class Consumer(ServerThread):
 	def __init__(self):
-		self.gelf = UdpClient('log.bype.org', port=12201, mtu=8000, source=socket.gethostname())
+		self.gelf = UdpClient('162.219.4.234', port=12201, mtu=8000, source=socket.gethostname())
 		self.result = [0,0,0,0,0,0,0,0]    
 		ServerThread.__init__(self, 1234)
 		self.sum = 0
