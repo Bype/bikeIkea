@@ -2,26 +2,35 @@ import time
 import random
 import sys
 import pygame
-from gelfclient import UdpClient
 import socket
 import liblo
+import simplejson
+from gelfclient import UdpClient
 
 class Publisher:
 	def __init__(self):
-		self.bike = random.randrange(0,8)
-		self.gelf = UdpClient('162.219.4.234', port=12201, mtu=8000, source=socket.gethostname())
+
+		f = open('/tmp/ikcop.conf', 'r')
+ 		self.config = simplejson.load(f)
+ 		print(self.config)
 		try:	
-			self.target = liblo.Address("localhost",1234)
+			self.target = liblo.Address("192.168.100.100",1234)
 		except liblo.AddressError as err:
 		    print(err)
 		    sys.exit()
-
+		try:
+			self.gelf = UdpClient('162.219.4.234', port=12201, mtu=8000, source=socket.gethostname())
+		except socket.error, (value,message): 
+			print "Could not open socket: " + message 
 
 	def logPower(self,aPower):
-		self.gelf.log("bike",power=aPower)
+		try:
+			self.gelf.log("bike"+str(self.config["bike"])+"zone"+str(self.config["zone"]),power=aPower)
+		except socket.error, (value,message): 
+			print "Could not open socket: " + message 
 
 	def pushPower(self,aPower):
-		liblo.send(self.target, "/power",self.bike ,aPower)
+		liblo.send(self.target, "/power",self.config["bike"] ,aPower)
 
 class UIBike:
 	def __init__(self):
