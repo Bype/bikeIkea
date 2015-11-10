@@ -1,3 +1,3 @@
 #!/bin/sh
 
-/usr/bin/startx
+python2 producer.py
