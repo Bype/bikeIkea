@@ -7,7 +7,10 @@ from liblo import *
 
 class Consumer(ServerThread):
 	def __init__(self):
-		self.gelf = UdpClient('162.219.4.234', port=12201, mtu=8000, source=socket.gethostname())
+		try:
+			self.gelf = UdpClient('162.219.4.234', port=12201, mtu=8000, source=socket.gethostname())
+		except socket.error, (value,message): 
+			print "Could not open socket: " + message 
 		self.result = [0,0,0,0,0,0,0,0]    
 		ServerThread.__init__(self, 1234)
 		self.sum = 0
@@ -26,9 +29,10 @@ class Consumer(ServerThread):
 		print("received unknown message '%s'" % path)	
 
 	def publish(self):
-		print self.result," ",self.sum
-		self.gelf.log("zone",sum=self.sum,details=self.result.__str__())
-
+		try:
+			self.gelf.log("zone",sum=self.sum,details=self.result.__str__())
+		except socket.error, (value,message): 
+			print "Could not open socket: " + message 
 
 try:
     server = Consumer()
