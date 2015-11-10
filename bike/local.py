@@ -1,4 +1,6 @@
 import wiringpi2 as wiringpi
+import simplejson
+
 
 pin_base = 65      # lowest available starting number is 65  
 i2c_addr = 0x21
@@ -16,4 +18,15 @@ raw = 255^byte
 zone = raw >> 3
 bike = raw & 7
 
+config = {
+	zone:zone,
+	bike:bike
+}
+
+f = open('/tmp/ikcop.conf', 'w')
+simplejson.dump(config, f) 
+f.close()
+
 print "zone%dbike%d" % (zone,bike)
+
+
