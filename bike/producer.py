@@ -27,10 +27,14 @@ class Publisher:
 		try:
 			self.gelf.log("bike"+str(self.config["bike"])+"zone"+str(self.config["zone"]),power=aPower)
 		except socket.error, (value,message): 
-			print "Could not open socket: " + message 
+			print "Could not send log : " + message 
 
 	def pushPower(self,aPower):
-		liblo.send(self.target, "/power",self.config["bike"] ,aPower)
+		try:
+			liblo.send(self.target, "/power",self.config["bike"] ,aPower)
+		except IOError, message:
+			print "Could not send osc message : " +str(message) 
+
 
 class UIBike:
 	def __init__(self):
