@@ -14,6 +14,7 @@ class Consumer(ServerThread):
 		self.result = [0,0,0,0,0,0,0,0]    
 		ServerThread.__init__(self, 1234)
 		self.sum = 0
+		self.zone = re.match(r'(.*)server',socket.gethostname()).group(1)
 
 	@make_method('/power','ii')
 	def foo_callback(self, path, args):
@@ -30,7 +31,7 @@ class Consumer(ServerThread):
 
 	def publish(self):
 		try:
-			self.gelf.log("zone",sum=self.sum,details=self.result.__str__())
+			self.gelf.log(,sum=self.sum,details=self.result.__str__())
 		except socket.error, (value,message): 
 			print "Could not open socket: " + message 
 
@@ -45,5 +46,5 @@ server.start()
 
 while True:
 	server.publish()
-	sleep(10)
+	sleep(60)
 
