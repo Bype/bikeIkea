@@ -19,13 +19,21 @@ zone = raw >> 3
 bike = raw & 7
 
 config = {
-	zone:zone,
-	bike:bike
+	"zone":zone,
+	"bike":bike
 }
 
 f = open('/tmp/ikcop.conf', 'w')
 simplejson.dump(config, f) 
 f.close()
+
+source = open('./wpa_supplicant.conf','r')
+target = open('/etc/wpa_supplicant/wpa_supplicant.conf','w')
+data= source.read()
+changed=data.replace('zone#ikcop','zone'+str(zone)+'ikcop')
+target.write(changed)
+source.close()
+target.close()
 
 print "zone%dbike%d" % (zone,bike)
 
