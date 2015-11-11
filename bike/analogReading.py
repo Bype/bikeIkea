@@ -27,5 +27,5 @@ while True:
 	r = rs.set('voltage', sumvoltage)
 	r = rs.set('current', sumcurrent)
 	r = rs.set('power', power)
-	time.sleep(.001)
+	time.sleep(.01)
 
