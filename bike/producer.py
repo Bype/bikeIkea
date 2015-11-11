@@ -6,13 +6,15 @@ import socket
 import liblo
 import simplejson
 from gelfclient import UdpClient
+import redis
+rs = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 class Publisher:
 	def __init__(self):
-		f = open('/tmp/ikcop.conf', 'r')
- 		self.config = simplejson.load(f)
+ 		self.zone = rs.get("zone")
+ 		self.bike = rs.get("bike")
  		self.myip="myip"
- 		print(self.config)
+ 		print(self.zone,self.bike)
 		try:	
 			self.target = liblo.Address("192.168.100.100",1234)
 		except liblo.AddressError as err:
@@ -31,14 +33,14 @@ class Publisher:
 				self.myip = s.getsockname()[0]
 				s.close()
 
-			self.gelf.log("bike"+str(self.config["bike"])+"zone"+str(self.config["zone"]),power=aPower,myip=self.myip)
+			self.gelf.log("bike"+str(self.bike)+"zone"+str(self.zone),power=aPower,myip=self.myip)
 		
 		except socket.error, (value,message): 
 			print "Could not send log : " + message 
 
 	def pushPower(self,aPower):
 		try:
-			liblo.send(self.target, "/power",self.config["bike"] ,aPower)
+			liblo.send(self.target, "/power",self.bike ,aPower)
 		except IOError, message:
 			print "Could not send osc message : " +str(message) 
 
@@ -112,8 +114,7 @@ myBike = UIBike()
 myLog = Publisher()
 
 pygame.time.set_timer(pygame.USEREVENT+1, 60000)
-pygame.time.set_timer(pygame.USEREVENT+2, 1000)
-pygame.time.set_timer(pygame.USEREVENT+3, 100)
+pygame.time.set_timer(pygame.USEREVENT+2, 2000)
 myBike.setupScreen()
 
 clock = pygame.time.Clock()
@@ -125,15 +126,8 @@ while True:
 			myLog.logPower(myBike.power)
 		if event.type == pygame.USEREVENT+2:
 			myLog.pushPower(myBike.power)			            
-		if event.type == pygame.USEREVENT+3:
-			if(power < 199) and (3<=power):
-				power += random.randrange(-1,5)
-			else:
-				power = 3
-			myBike.setPower(power)
-			if (random.randrange(0,100)<5):
-				power = 3
 		if event.type == pygame.QUIT:
 			break
+	myBike.setPower(int(rs.get("power")))
 	myBike.update()
 	clock.tick(25)
