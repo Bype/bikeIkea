@@ -24,13 +24,13 @@ class Consumer(ServerThread):
 		self.sum=0
 		for n in self.result:
 			self.sum += n
-		print self.sum
 
 	@make_method(None, None)
 	def fallback(self, path, args):
 		print("received unknown message '%s'" % path)	
 
 	def publish(self):
+		print self.result,self.sum
 		try:
 			self.gelf.log(msg=self.zone,sum=self.sum,details=self.result.__str__())
 		except socket.error, (value,message): 
