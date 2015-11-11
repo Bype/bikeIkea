@@ -2,6 +2,7 @@ from time import time, sleep
 import random
 import pprint
 import socket
+import re
 from gelfclient import UdpClient
 from liblo import *
 
