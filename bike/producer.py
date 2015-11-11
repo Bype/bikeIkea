@@ -115,7 +115,7 @@ myLog = Publisher()
 
 pygame.time.set_timer(pygame.USEREVENT+1, 60000)
 pygame.time.set_timer(pygame.USEREVENT+2, 2000)
-pygame.time.set_timer(pygame.USEREVENT+3, 100)
+pygame.time.set_timer(pygame.USEREVENT+3, 300)
 myBike.setupScreen()
 
 clock = pygame.time.Clock()
