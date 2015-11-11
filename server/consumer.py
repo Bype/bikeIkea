@@ -31,7 +31,7 @@ class Consumer(ServerThread):
 
 	def publish(self):
 		try:
-			self.gelf.log(,sum=self.sum,details=self.result.__str__())
+			self.gelf.log(msg=self.zone,sum=self.sum,details=self.result.__str__())
 		except socket.error, (value,message): 
 			print "Could not open socket: " + message 
 
