@@ -9,9 +9,9 @@ from gelfclient import UdpClient
 
 class Publisher:
 	def __init__(self):
-
 		f = open('/tmp/ikcop.conf', 'r')
  		self.config = simplejson.load(f)
+ 		self.myip="myip"
  		print(self.config)
 		try:	
 			self.target = liblo.Address("192.168.100.100",1234)
@@ -25,7 +25,14 @@ class Publisher:
 
 	def logPower(self,aPower):
 		try:
-			self.gelf.log("bike"+str(self.config["bike"])+"zone"+str(self.config["zone"]),power=aPower)
+			if self.myip == "myip":
+				s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+				s.connect(("192.168.100.100",1234))
+				self.myip = s.getsockname()[0]
+				s.close()
+
+			self.gelf.log("bike"+str(self.config["bike"])+"zone"+str(self.config["zone"]),power=aPower,myip=self.myip)
+		
 		except socket.error, (value,message): 
 			print "Could not send log : " + message 
 
@@ -55,8 +62,9 @@ class UIBike:
 		self.bgrect = self.bg.get_rect()
 		self.scale = pygame.image.load("img/scale.png").convert_alpha()
 		self.scalerect = self.scale.get_rect()
-		self.ratio = (self.scalerect.h-272) / 200.0
-		self.cropy = self.scalerect.h-272
+		self.shitfy = 265
+		self.ratio = (self.scalerect.h-self.shitfy) / 208.0
+		self.cropy = self.scalerect.h-self.shitfy
 		for i in xrange(6):
 			self.icon.append(pygame.image.load("img/%d.png"%(i+1)).convert_alpha())
 		self.screen.blit(self.bg,self.bgrect)
@@ -65,7 +73,7 @@ class UIBike:
 		
 	def setPower(self,p):
 		self.power = p
-		self.targety = int((self.scalerect.h-272)-(self.power*self.ratio))
+		self.targety = int((self.scalerect.h-self.shitfy)-(self.power*self.ratio))
 		for ipr in range(0,6):	
 			if p < self.powerRanger[ipr]:
 				self.setIcon(ipr)
@@ -89,15 +97,15 @@ class UIBike:
 		pygame.display.update((64,0,self.scalerect.w,272))
 		if self.currentIcon != self.nextIcon:
 			if(self.iconx<480):
-				self.screen.blit(self.icon[self.currentIcon],(self.iconx,36),self.icon[self.currentIcon].get_rect())
+				self.screen.blit(self.icon[self.currentIcon],(self.iconx,44),self.icon[self.currentIcon].get_rect())
 				self.iconx += (500-self.iconx)/5
 			else:
 				self.currentIcon = self.nextIcon
 			pygame.display.update((240,0,480,272))
 		else:
-			if(240 < self.iconx):
-				self.screen.blit(self.icon[self.nextIcon],(self.iconx,36),self.icon[self.currentIcon].get_rect())
-				self.iconx -= (self.iconx-240)/5
+			if(231 < self.iconx):
+				self.screen.blit(self.icon[self.nextIcon],(self.iconx,44),self.icon[self.currentIcon].get_rect())
+				self.iconx -= (self.iconx-231)/5
 			pygame.display.update((240,0,480,272))
 		
 myBike = UIBike()
@@ -119,7 +127,7 @@ while True:
 			myLog.pushPower(myBike.power)			            
 		if event.type == pygame.USEREVENT+3:
 			if(power < 199) and (3<=power):
-				power += random.randrange(-1,3)
+				power += random.randrange(-1,5)
 			else:
 				power = 3
 			myBike.setPower(power)
