@@ -115,6 +115,7 @@ myLog = Publisher()
 
 pygame.time.set_timer(pygame.USEREVENT+1, 60000)
 pygame.time.set_timer(pygame.USEREVENT+2, 2000)
+pygame.time.set_timer(pygame.USEREVENT+3, 100)
 myBike.setupScreen()
 
 clock = pygame.time.Clock()
@@ -128,6 +129,7 @@ while True:
 			myLog.pushPower(myBike.power)			            
 		if event.type == pygame.QUIT:
 			break
-	myBike.setPower(int(rs.get("power")))
+		if event.type == pygame.USEREVENT+3:
+			myBike.setPower(int(float(rs.get("power"))))
 	myBike.update()
 	clock.tick(25)
