@@ -29,7 +29,6 @@ bike = raw & 7
 rs.set("zone",zone)
 rs.set("bike",zone)
 
-
 source = open('./wpa_supplicant.conf','r')
 target = open('/etc/wpa_supplicant/wpa_supplicant.conf','w')
 data= source.read()
