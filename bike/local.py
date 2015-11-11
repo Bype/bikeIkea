@@ -1,6 +1,8 @@
 import wiringpi2 as wiringpi
 import simplejson
 from subprocess import call
+import socket
+import time
 
 pin_base = 65      # lowest available starting number is 65  
 i2c_addr = 0x21
@@ -18,9 +20,17 @@ raw = 255^byte
 zone = raw >> 3
 bike = raw & 7
 
+try:
+	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	s.connect(("192.168.100.100",1234))
+	myip = s.getsockname()[0]
+	s.close()
+except
+
 config = {
 	"zone":zone,
-	"bike":bike
+	"bike":bike,
+	"ip":myip
 }
 
 f = open('/tmp/ikcop.conf', 'w')
@@ -37,6 +47,27 @@ target.close()
 
 call(["ifdown", "wlan0"])
 call(["ifup", "wlan0"])
+
+time.sleep(5)
+
+try:
+	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	s.connect(("192.168.100.100",1234))
+	myip = s.getsockname()[0]
+	s.close()
+except socket.error, (value,message): 
+	print "Could socket: " + message 
+
+config = {
+	"zone":zone,
+	"bike":bike,
+	"ip":myip
+}
+
+f = open('/tmp/ikcop.conf', 'w')
+simplejson.dump(config, f) 
+f.close()
+
 
 print "zone%dbike%d" % (zone,bike)
 
