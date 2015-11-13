@@ -17,7 +17,7 @@ while True:
 	rawvoltage[i] = (wpi.analogRead(73) *3.3)/1024.0
 	i = (i+1)%10
 	sumcurrent =0
-	sumvoltage =0
+	sumvoltage =13
 	for j in range(10):
 		sumcurrent += rawcurrent[j]
 		sumvoltage += rawvoltage[j]
