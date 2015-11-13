@@ -70,7 +70,7 @@ class Consumer(ServerThread):
 		try:
 			requests.get('http://ikcop.bype.org/set/ccf82dd-807d-4f63-a30b-c78e53072a38/zone/'+self.zonen+'/'+str(self.sum))
 		except requests.exceptions.RequestException as e:
-    		print e
+			print e
 
 		try:
 			self.gelf.log(self.zone,sum=self.sum,details=self.result.__str__())
