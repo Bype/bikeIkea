@@ -22,6 +22,4 @@ while True:
 		power = 200
 	r = rs.set('voltage', sumvoltage)
 	r = rs.set('power', power)
-	print power
 	time.sleep(.1)
-
