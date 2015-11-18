@@ -11,15 +11,15 @@ rs = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 class Publisher:
 	def __init__(self):
- 		self.zone = rs.get("zone")
- 		self.bike = rs.get("bike")
- 		self.myip="myip"
- 		print(self.zone,self.bike)
+		self.zone = rs.get("zone")
+		self.bike = rs.get("bike")
+		self.myip="myip"
+		print(self.zone,self.bike)
 		try:	
 			self.target = liblo.Address("192.168.100.100",1234)
 		except liblo.AddressError as err:
-		    print(err)
-		    sys.exit()
+			print(err)
+			sys.exit()
 		try:
 			self.gelf = UdpClient('162.219.4.234', port=12201, mtu=8000, source=socket.gethostname())
 		except socket.error, (value,message): 
@@ -40,7 +40,7 @@ class Publisher:
 
 	def pushPower(self,aPower):
 		try:
-			liblo.send(self.target, "/power",self.bike ,aPower)
+			liblo.send(self.target, "/power",int(self.bike),int(aPower))
 		except IOError, message:
 			print "Could not send osc message : " +str(message) 
 
@@ -81,13 +81,10 @@ class UIBike:
 				self.setIcon(ipr)
 				break
 
-
 	def setIcon(self,i):
 		if (i != self.nextIcon ) and (i != self.currentIcon) and ( 2 < time.time() - self.lastIcon ) :
 			self.nextIcon = i
 			self.lastIcon = time.time() 
-
-
 
 	def update(self):
 		self.screen.blit(self.bg,self.bgrect)
@@ -120,7 +117,6 @@ myBike.setupScreen()
 
 clock = pygame.time.Clock()
 power = 3
-
 while True:
 	for event in pygame.event.get():
 		if event.type == pygame.USEREVENT+1:
