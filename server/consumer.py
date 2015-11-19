@@ -64,7 +64,7 @@ class Consumer(ServerThread):
 			self.sum += n	
 
 	def updateDMX(self):
-		self.dmx.sendPercent((100*self.sum)/1600)
+		self.dmx.sendPercent((100*self.sum)/600)
 
 	def publish(self):
 		try:
