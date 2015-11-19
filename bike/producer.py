@@ -53,7 +53,7 @@ class UIBike:
 		self.currentIcon = 0
 		self.nextIcon = 0
 		self.iconx = 480
-		self.powerRanger =[10,20,40,80,120,180]
+		self.powerRanger =[30,60,90,120,150,200]
 		self.lastIcon = time.time()
 
 	def setupScreen(self):
@@ -76,10 +76,14 @@ class UIBike:
 	def setPower(self,p):
 		self.power = p
 		self.targety = int((self.scalerect.h-self.shitfy)-(self.power*self.ratio))
-		for ipr in range(0,6):	
-			if p < self.powerRanger[ipr]:
-				self.setIcon(ipr)
-				break
+		if (10<p):
+			for ipr in range(0,6):	
+				if p < self.powerRanger[ipr]:
+					self.setIcon(ipr)
+					break
+		else:
+			self.setIcon(-1)
+
 
 	def setIcon(self,i):
 		if (i != self.nextIcon ) and (i != self.currentIcon) and ( 2 < time.time() - self.lastIcon ) :
@@ -100,12 +104,12 @@ class UIBike:
 				self.iconx += (500-self.iconx)/5
 			else:
 				self.currentIcon = self.nextIcon
-			pygame.display.update((240,0,480,272))
+			pygame.display.update((231,0,480,272))
 		else:
-			if(231 < self.iconx):
+			if (self.currentIcon!=-1) and(231 < self.iconx):
 				self.screen.blit(self.icon[self.nextIcon],(self.iconx,44),self.icon[self.currentIcon].get_rect())
 				self.iconx -= (self.iconx-231)/5
-			pygame.display.update((240,0,480,272))
+			pygame.display.update((231,0,480,272))
 		
 myBike = UIBike()
 myLog = Publisher()
