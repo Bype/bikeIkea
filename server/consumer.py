@@ -33,6 +33,12 @@ class DMX:
 		sdata=''.join(self.dmxdata)
 		# write the data to the serial port, this sends the data to your fixture
 		self.ser.write(self.DMXOPEN+self.DMXINTENSITY+sdata+self.DMXCLOSE)
+
+	def enable(self, state):
+		if state:
+			self.senddmx(3,100)
+		else:
+			self.senddmx(3,255)
         
 	def sendPercent(self,percent):
 		for i in range(8):
@@ -61,7 +67,16 @@ class Consumer(ServerThread):
 		self.result[bike] = int(power)
 		self.sum=0
 		for n in self.result:
-			self.sum += n	
+			self.sum += n
+
+	@make_method('/enable','i')
+	def foo_callback(self, path, args):
+		state = args
+		self.dmx.enable(state == 1)
+		try:
+			self.gelf.log(self.zone+"_power",enable=state)
+		except socket.error, (value,message): 
+			print "Could not open socket: " + message 
 
 	def updateDMX(self):
 		self.dmx.sendPercent((100*self.sum)/600)
