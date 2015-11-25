@@ -1,0 +1,2 @@
+00 02 * * * /home/pi/bikeIkea/server/off.py 
+00 10 * * * /home/pi/bikeIkea/server/on.py 
