@@ -79,7 +79,7 @@ class Consumer(ServerThread):
 			print "Could not open socket: " + message 
 
 	def updateDMX(self):
-		self.dmx.sendPercent((100*self.sum)/600)
+		self.dmx.sendPercent((100*self.sum)/350)
 
 	def publish(self):
 		try:
