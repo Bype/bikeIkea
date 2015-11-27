@@ -70,7 +70,7 @@ class Consumer(ServerThread):
 			self.sum += n
 
 	@make_method('/enable','i')
-	def foo_callback(self, path, args):
+	def bar_callback(self, path, args):
 		state = args
 		self.dmx.enable(state == 1)
 		try:
@@ -79,7 +79,7 @@ class Consumer(ServerThread):
 			print "Could not open socket: " + message 
 
 	def updateDMX(self):
-		self.dmx.sendPercent((100*self.sum)/350)
+		self.dmx.sendPercent((100*self.sum)/450)
 
 	def publish(self):
 		try:
