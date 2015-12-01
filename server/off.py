@@ -1,6 +1,3 @@
-#!/usr/bin/env python2
+#!/bin/sh
 
-import liblo
-
-target = liblo.Address("192.168.100.100",1234)
-#liblo.send(target,"/enable",0)
+/usr/bin/sudo /sbin/reboot
